@@ -7,90 +7,62 @@
 
 <style>
 html, body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  background: #000; overflow: hidden;
+  user-select: none; -webkit-user-select: none; -ms-user-select: none;
   font-family: Arial, sans-serif;
 }
 
 #player-wrapper {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   background: #000;
 }
 
-/* ================= PLAYER ================= */
+/* ===== PLAYER ===== */
 iframe {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   border: none;
   pointer-events: none;
 }
 
-/* ================= MASK BRANDING ================= */
-.mask-top-left {
+/* ===== MASK BRANDING (SEMUA SUDUT) ===== */
+.mask-top-left,
+.mask-top-right,
+.mask-bottom-left,
+.mask-bottom-right {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 110px;
   z-index: 80;
   pointer-events: none;
+  background: transparent;
 }
+.mask-top-left    { top: 0; left: 0; width: 280px; height: 120px; }
+.mask-top-right   { top: 0; right: 0; width: 220px; height: 120px; }
+.mask-bottom-left { bottom: 0; left: 0; width: 300px; height: 160px; }
+.mask-bottom-right{ bottom: 0; right: 0; width: 180px; height: 100px; }
 
-.mask-top-right {
+/* ===== LOGO SAJA (GANTI YT) ===== */
+.logo-only {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 200px;
-  height: 110px;
-  z-index: 80;
-  pointer-events: none;
-}
-
-.mask-bottom-left {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 260px;
-  height: 140px;
-  z-index: 80;
-  pointer-events: none;
-}
-
-/* ================= LOGO SAJA ================= */
-.yt-logo-only {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 38px;
-  height: 38px;
-  background: url("https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg")
-              no-repeat center / contain;
-  opacity: 0.85;
+  top: 18px; right: 18px;
+  width: 38px; height: 38px;
+  background: url("logo.png") no-repeat center / contain;
+  opacity: .9;
   z-index: 90;
   pointer-events: none;
 }
 
-/* ================= WATERMARK (2) ================= */
+/* ===== WATERMARK (2 SAJA) ===== */
 .watermark {
   position: absolute;
-  font-size: 24px;
-  font-weight: bold;
-  color: rgba(255,255,255,0.18);
+  font-size: 24px; font-weight: bold;
+  color: rgba(255,255,255,.18);
   white-space: nowrap;
   pointer-events: none;
   z-index: 60;
   animation: wmMove 28s linear infinite;
 }
-
 .wm1 { top: 18%; left: -40%; }
 .wm2 { bottom: 22%; right: -40%; animation-direction: reverse; }
 
@@ -99,22 +71,28 @@ iframe {
   to   { transform: translateX(180%); }
 }
 
-/* ================= FAKE PLAY ================= */
+/* ===== FAKE PLAY ===== */
 #fake-play {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100;
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 100;
 }
+#fake-play span { font-size: 90px; color: #fff; }
 
-#fake-play span {
-  font-size: 90px;
+/* ===== ERROR OVERLAY (GANTI UI ERROR YT) ===== */
+#error-overlay {
+  position: absolute; inset: 0;
+  background: #000;
+  display: none;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  z-index: 200;
   color: #fff;
 }
+#error-overlay img { width: 96px; margin-bottom: 18px; opacity: .9; }
+#error-overlay p   { font-size: 16px; opacity: .85; }
 </style>
 </head>
 
@@ -130,16 +108,21 @@ iframe {
   <div class="mask-top-left"></div>
   <div class="mask-top-right"></div>
   <div class="mask-bottom-left"></div>
+  <div class="mask-bottom-right"></div>
 
-  <!-- LOGO SAJA -->
-  <div class="yt-logo-only"></div>
+  <!-- LOGO CUSTOM (GANTI YT) -->
+  <div class="logo-only"></div>
 
   <!-- FAKE PLAY -->
-  <div id="fake-play">
-    <span>▶</span>
+  <div id="fake-play"><span>▶</span></div>
+
+  <!-- ERROR CUSTOM -->
+  <div id="error-overlay">
+    <img src="logo.png" alt="logo">
+    <p>Stream sedang tidak tersedia.<br>Silakan coba lagi nanti.</p>
   </div>
 
-  <!-- YOUTUBE -->
+  <!-- YOUTUBE IFRAME -->
   <iframe id="ytplayer"
     src="https://www.youtube-nocookie.com/embed/VIDEO_ID_GANTI?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1"
     allow="autoplay; encrypted-media"
@@ -149,37 +132,39 @@ iframe {
 </div>
 
 <script>
-/* ================= PLAY ================= */
+/* ===== PLAY ===== */
 const fake = document.getElementById('fake-play');
 const yt   = document.getElementById('ytplayer');
-
 fake.onclick = () => {
   fake.style.display = 'none';
   yt.style.pointerEvents = 'auto';
   yt.src = yt.src.replace('mute=1','mute=0');
 };
 
-/* ================= HARDCORE LOCK ================= */
+/* ===== HARDCORE LOCK ===== */
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart', e => e.preventDefault());
-document.addEventListener('dragstart', e => e.preventDefault());
-
+document.addEventListener('dragstart',  e => e.preventDefault());
 document.addEventListener('keydown', e => {
   if (
     e.key === 'F12' ||
     e.key === 'PrintScreen' ||
     (e.ctrlKey && ['u','c','s','x','a','p'].includes(e.key.toLowerCase())) ||
     (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))
-  ) {
-    e.preventDefault();
-    return false;
-  }
+  ) { e.preventDefault(); return false; }
 });
-
-/* BLOCK LONG PRESS MOBILE */
 document.addEventListener('touchstart', e => {
   if (e.touches.length > 1) e.preventDefault();
 },{ passive:false });
+
+/* ===== ERROR HANDLER (PAKSA TUTUP UI YT) ===== */
+setTimeout(() => {
+  try {
+    yt.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+  } catch(e) {
+    document.getElementById('error-overlay').style.display = 'flex';
+  }
+}, 6000);
 </script>
 
 </body>
