@@ -6,166 +6,156 @@
 <title>ReplayShow-JKT48 Live</title>
 
 <style>
-html, body {
-  margin: 0; padding: 0;
-  width: 100%; height: 100%;
-  background: #000; overflow: hidden;
-  user-select: none; -webkit-user-select: none; -ms-user-select: none;
-  font-family: Arial, sans-serif;
+html,body{
+  margin:0;padding:0;width:100%;height:100%;
+  background:#000;overflow:hidden;
+  user-select:none;-webkit-user-select:none;
+  font-family:Arial,sans-serif
 }
+#wrap{position:relative;width:100%;height:100%}
+iframe{width:100%;height:100%;border:0;pointer-events:none}
 
-#player-wrapper {
-  position: relative;
-  width: 100%; height: 100%;
-  background: #000;
-}
+/* ===== MASK SEMUA SUDUT (DESKTOP SAFE) ===== */
+.mask{position:absolute;z-index:120;pointer-events:none}
+.tl{top:0;left:0;width:320px;height:160px}
+.tr{top:0;right:0;width:260px;height:160px}
+.bl{bottom:0;left:0;width:520px;height:300px}
+.br{bottom:0;right:0;width:240px;height:140px}
 
-/* ===== PLAYER ===== */
-iframe {
-  width: 100%; height: 100%;
-  border: none;
-  pointer-events: none;
-}
+/* soft overlay (tahan UI desktop YT) */
+.soft{position:absolute;inset:0;background:rgba(0,0,0,.001);z-index:115;pointer-events:none}
 
-/* ===== MASK BRANDING (SEMUA SUDUT) ===== */
-.mask-top-left,
-.mask-top-right,
-.mask-bottom-left,
-.mask-bottom-right {
-  position: absolute;
-  z-index: 80;
-  pointer-events: none;
-  background: transparent;
-}
-.mask-top-left    { top: 0; left: 0; width: 280px; height: 120px; }
-.mask-top-right   { top: 0; right: 0; width: 220px; height: 120px; }
-.mask-bottom-left { bottom: 0; left: 0; width: 300px; height: 160px; }
-.mask-bottom-right{ bottom: 0; right: 0; width: 180px; height: 100px; }
+/* ===== LOGO CUSTOM ===== */
+.logo{position:absolute;top:18px;right:18px;width:38px;height:38px;
+  background:url("logo.png") center/contain no-repeat;opacity:.9;z-index:130;pointer-events:none}
 
-/* ===== LOGO SAJA (GANTI YT) ===== */
-.logo-only {
-  position: absolute;
-  top: 18px; right: 18px;
-  width: 38px; height: 38px;
-  background: url("logo.png") no-repeat center / contain;
-  opacity: .9;
-  z-index: 90;
-  pointer-events: none;
-}
-
-/* ===== WATERMARK (2 SAJA) ===== */
-.watermark {
-  position: absolute;
-  font-size: 24px; font-weight: bold;
-  color: rgba(255,255,255,.18);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 60;
-  animation: wmMove 28s linear infinite;
-}
-.wm1 { top: 18%; left: -40%; }
-.wm2 { bottom: 22%; right: -40%; animation-direction: reverse; }
-
-@keyframes wmMove {
-  from { transform: translateX(0); }
-  to   { transform: translateX(180%); }
-}
+/* ===== WATERMARK (2) ===== */
+.wm{position:absolute;font-size:24px;font-weight:bold;color:rgba(255,255,255,.18);
+  white-space:nowrap;pointer-events:none;z-index:60;animation:mv 28s linear infinite}
+.wm1{top:18%;left:-40%}
+.wm2{bottom:22%;right:-40%;animation-direction:reverse}
+@keyframes mv{from{transform:translateX(0)}to{transform:translateX(180%)}}
 
 /* ===== FAKE PLAY ===== */
-#fake-play {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.6);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 100;
-}
-#fake-play span { font-size: 90px; color: #fff; }
+#play{position:absolute;inset:0;background:rgba(0,0,0,.6);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150}
+#play span{font-size:90px;color:#fff}
 
-/* ===== ERROR OVERLAY (GANTI UI ERROR YT) ===== */
-#error-overlay {
-  position: absolute; inset: 0;
-  background: #000;
-  display: none;
-  align-items: center; justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  z-index: 200;
-  color: #fff;
-}
-#error-overlay img { width: 96px; margin-bottom: 18px; opacity: .9; }
-#error-overlay p   { font-size: 16px; opacity: .85; }
+/* ===== BLOKIR / ERROR ===== */
+#block{position:absolute;inset:0;background:#000;display:none;
+  align-items:center;justify-content:center;flex-direction:column;z-index:200;color:#fff;text-align:center}
+#block img{width:96px;margin-bottom:18px;opacity:.9}
+#block p{opacity:.85}
 </style>
 </head>
 
 <body>
-
-<div id="player-wrapper">
+<div id="wrap">
 
   <!-- WATERMARK -->
-  <div class="watermark wm1">ReplayShow-JKT48</div>
-  <div class="watermark wm2">ReplayShow-JKT48</div>
+  <div class="wm wm1">ReplayShow-JKT48</div>
+  <div class="wm wm2">ReplayShow-JKT48</div>
 
-  <!-- MASK BRANDING -->
-  <div class="mask-top-left"></div>
-  <div class="mask-top-right"></div>
-  <div class="mask-bottom-left"></div>
-  <div class="mask-bottom-right"></div>
+  <!-- MASK -->
+  <div class="mask tl"></div>
+  <div class="mask tr"></div>
+  <div class="mask bl"></div>
+  <div class="mask br"></div>
 
-  <!-- LOGO CUSTOM (GANTI YT) -->
-  <div class="logo-only"></div>
+  <!-- LOGO -->
+  <div class="logo"></div>
+
+  <!-- SOFT OVERLAY -->
+  <div class="soft"></div>
 
   <!-- FAKE PLAY -->
-  <div id="fake-play"><span>▶</span></div>
+  <div id="play"><span>▶</span></div>
 
-  <!-- ERROR CUSTOM -->
-  <div id="error-overlay">
+  <!-- BLOKIR / ERROR -->
+  <div id="block">
     <img src="logo.png" alt="logo">
-    <p>Stream sedang tidak tersedia.<br>Silakan coba lagi nanti.</p>
+    <p>Akses tidak valid atau stream tidak tersedia.</p>
   </div>
 
-  <!-- YOUTUBE IFRAME -->
-  <iframe id="ytplayer"
+  <!-- YT -->
+  <iframe id="yt"
     src="https://www.youtube-nocookie.com/embed/VIDEO_ID_GANTI?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1"
-    allow="autoplay; encrypted-media"
-    allowfullscreen>
-  </iframe>
+    allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 </div>
 
 <script>
-/* ===== PLAY ===== */
-const fake = document.getElementById('fake-play');
-const yt   = document.getElementById('ytplayer');
-fake.onclick = () => {
-  fake.style.display = 'none';
-  yt.style.pointerEvents = 'auto';
-  yt.src = yt.src.replace('mute=1','mute=0');
+/* ================= TOKEN POOL 500 ================= */
+const DEVICE_KEY="RSJKT48_DEVICE_TOKEN";
+const POOL_KEY="RSJKT48_TOKEN_POOL";
+const MAX_TOKEN=500;
+
+function genToken(){
+  return "T"+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+}
+function initPool(){
+  let pool=JSON.parse(localStorage.getItem(POOL_KEY)||"[]");
+  while(pool.length<MAX_TOKEN) pool.push(genToken());
+  localStorage.setItem(POOL_KEY,JSON.stringify(pool));
+  return pool;
+}
+function getDeviceToken(){
+  let t=localStorage.getItem(DEVICE_KEY);
+  let pool=initPool();
+  if(!t){
+    t=pool.pop();
+    localStorage.setItem(DEVICE_KEY,t);
+    localStorage.setItem(POOL_KEY,JSON.stringify(pool));
+  }
+  return t;
+}
+const url=new URL(location.href);
+const tURL=url.searchParams.get("t");
+const tDEV=getDeviceToken();
+if(!tURL){
+  url.searchParams.set("t",tDEV);
+  history.replaceState(null,"",url);
+}else if(tURL!==tDEV){
+  document.getElementById("block").style.display="flex";
+}
+
+/* ================= PLAY ================= */
+const play=document.getElementById("play");
+const yt=document.getElementById("yt");
+play.onclick=()=>{
+  play.style.display="none";
+  yt.style.pointerEvents="auto";
+  yt.src=yt.src.replace("mute=1","mute=0");
 };
 
-/* ===== HARDCORE LOCK ===== */
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('selectstart', e => e.preventDefault());
-document.addEventListener('dragstart',  e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (
-    e.key === 'F12' ||
-    e.key === 'PrintScreen' ||
-    (e.ctrlKey && ['u','c','s','x','a','p'].includes(e.key.toLowerCase())) ||
-    (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))
-  ) { e.preventDefault(); return false; }
+/* ================= HARDCORE LOCK ================= */
+["contextmenu","selectstart","dragstart"].forEach(e=>{
+  document.addEventListener(e,ev=>ev.preventDefault())
 });
-document.addEventListener('touchstart', e => {
-  if (e.touches.length > 1) e.preventDefault();
-},{ passive:false });
-
-/* ===== ERROR HANDLER (PAKSA TUTUP UI YT) ===== */
-setTimeout(() => {
-  try {
-    yt.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-  } catch(e) {
-    document.getElementById('error-overlay').style.display = 'flex';
+document.addEventListener("keydown",e=>{
+  if(e.key==="F12"||e.key==="PrintScreen"||
+     (e.ctrlKey&&["u","c","s","x","a","p"].includes(e.key.toLowerCase()))||
+     (e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(e.key.toLowerCase()))){
+    e.preventDefault();return false;
   }
-}, 6000);
-</script>
+});
+document.addEventListener("touchstart",e=>{
+  if(e.touches.length>1)e.preventDefault();
+},{passive:false});
 
+/* ================= FORCE CLEAN DESKTOP ================= */
+setInterval(()=>{
+  const b=document.getElementById("block");
+  if(b.style.display==="flex")return;
+  try{
+    yt.contentWindow.postMessage(
+      '{"event":"command","func":"playVideo","args":""}','*'
+    );
+  }catch(e){
+    b.style.display="flex";
+    play.style.display="none";
+  }
+},3000);
+</script>
 </body>
 </html>
