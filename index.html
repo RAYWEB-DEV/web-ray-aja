@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReplayShow-JKT48 Live</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: Arial, sans-serif;
+}
+
+#player-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+/* ===== YOUTUBE ===== */
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+/* ===== TUTUP BRANDING YT (FULL) ===== */
+.yt-mask {
+  position: absolute;
+  z-index: 80;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* pojok kanan atas (logo + watch on yt) */
+.mask-top-right {
+  top: 0;
+  right: 0;
+  width: 160px;
+  height: 90px;
+}
+
+/* pojok kiri bawah (branding saat pause) */
+.mask-bottom-left {
+  bottom: 0;
+  left: 0;
+  width: 220px;
+  height: 120px;
+}
+
+/* ===== FAKE PLAY ===== */
+#fake-controls {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 100;
+}
+
+#fake-controls span {
+  font-size: 90px;
+  color: #fff;
+}
+
+/* ===== WATERMARK (2 SAJA) ===== */
+.watermark {
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(255,255,255,0.18);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 60;
+  animation: slide 28s linear infinite;
+}
+
+.wm-1 { top: 15%; left: -40%; }
+.wm-2 { bottom: 20%; right: -40%; animation-direction: reverse; }
+
+@keyframes slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(180%); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="player-wrapper">
+
+  <!-- WATERMARK -->
+  <div class="watermark wm-1">ReplayShow-JKT48</div>
+  <div class="watermark wm-2">ReplayShow-JKT48</div>
+
+  <!-- MASK BRANDING YOUTUBE -->
+  <div class="yt-mask mask-top-right"></div>
+  <div class="yt-mask mask-bottom-left"></div>
+
+  <!-- FAKE PLAY -->
+  <div id="fake-controls">
+    <span>▶</span>
+  </div>
+
+  <!-- YOUTUBE PLAYER -->
+  <iframe id="ytplayer"
+    src="https://www.youtube-nocookie.com/embed/VIDEO_ID_GANTI?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1&rel=0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen>
+  </iframe>
+
+</div>
+
+<script>
+/* ===== FAKE PLAY ===== */
+const overlay = document.getElementById('fake-controls');
+const iframe  = document.getElementById('ytplayer');
+
+overlay.onclick = () => {
+  overlay.style.display = 'none';
+  iframe.style.pointerEvents = 'auto';
+  iframe.src = iframe.src.replace('mute=1','mute=0');
+};
+
+/* ===== ANTI USER AWAM ===== */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (
+    e.key === 'F12' ||
+    (e.ctrlKey && ['c','u','s','x','a'].includes(e.key.toLowerCase()))
+  ) e.preventDefault();
+});
+</script>
+
+</body>
+</html>
