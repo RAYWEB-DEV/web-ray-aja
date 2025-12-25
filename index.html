@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ReplayShow-JKT48 Live</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  font-family: Arial, sans-serif;
+}
+
+#player-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#fake-controls {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 50;
+}
+
+#fake-controls span {
+  font-size: 90px;
+  color: #fff;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+.watermark {
+  position: absolute;
+  font-size: 22px;
+  font-weight: bold;
+  color: rgba(255,255,255,0.14);
+  pointer-events: none;
+  white-space: nowrap;
+  animation: move 20s linear infinite, blink 6s ease-in-out infinite;
+  z-index: 30;
+}
+
+@keyframes move {
+  from { transform: translate(-40px, -20px); }
+  to   { transform: translate(40px, 20px); }
+}
+
+@keyframes blink {
+  0%,100% { opacity: .12; }
+  50%     { opacity: .25; }
+}
+</style>
+</head>
+
+<body>
+<div id="player-wrapper">
+  <div id="fake-controls"><span>▶</span></div>
+
+  <iframe id="ytplayer"
+    src="https://www.youtube-nocookie.com/embed/VIDEO_ID_GANTI?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1&rel=0"
+    allow="autoplay; encrypted-media">
+  </iframe>
+</div>
+
+<script>
+const overlay = document.getElementById('fake-controls');
+const iframe  = document.getElementById('ytplayer');
+
+overlay.addEventListener('click', () => {
+  overlay.style.display = 'none';
+  iframe.style.pointerEvents = 'auto';
+  iframe.src = iframe.src.replace('mute=1','mute=0');
+});
+
+const wrapper = document.getElementById('player-wrapper');
+for (let i = 0; i < 14; i++) {
+  const wm = document.createElement('div');
+  wm.className = 'watermark';
+  wm.innerText = 'ReplayShow-JKT48';
+  wm.style.top  = Math.random() * 90 + '%';
+  wm.style.left = Math.random() * 90 + '%';
+  wm.style.fontSize = (18 + Math.random() * 12) + 'px';
+  wm.style.animationDuration = (12 + Math.random() * 20) + 's';
+  wrapper.appendChild(wm);
+}
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' || (e.ctrlKey && ['c','u','s','x','a'].includes(e.key.toLowerCase()))) {
+    e.preventDefault();
+  }
+});
+document.addEventListener('selectstart', e => e.preventDefault());
+</script>
+</body>
+</html>
