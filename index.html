@@ -10,10 +10,12 @@ html, body {
   margin: 0;
   padding: 0;
   background: #000;
+  width: 100%;
   height: 100%;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+  -ms-user-select: none;
   font-family: Arial, sans-serif;
 }
 
@@ -24,7 +26,7 @@ html, body {
   background: #000;
 }
 
-/* ===== YOUTUBE ===== */
+/* ================= PLAYER ================= */
 iframe {
   width: 100%;
   height: 100%;
@@ -32,65 +34,86 @@ iframe {
   pointer-events: none;
 }
 
-/* ===== TUTUP BRANDING YT (FULL) ===== */
-.yt-mask {
+/* ================= MASK BRANDING ================= */
+.mask-top-left {
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 110px;
   z-index: 80;
   pointer-events: none;
-  background: transparent;
 }
 
-/* pojok kanan atas (logo + watch on yt) */
 .mask-top-right {
+  position: absolute;
   top: 0;
   right: 0;
-  width: 160px;
-  height: 90px;
+  width: 200px;
+  height: 110px;
+  z-index: 80;
+  pointer-events: none;
 }
 
-/* pojok kiri bawah (branding saat pause) */
 .mask-bottom-left {
+  position: absolute;
   bottom: 0;
   left: 0;
-  width: 220px;
-  height: 120px;
+  width: 260px;
+  height: 140px;
+  z-index: 80;
+  pointer-events: none;
 }
 
-/* ===== FAKE PLAY ===== */
-#fake-controls {
+/* ================= LOGO SAJA ================= */
+.yt-logo-only {
   position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  z-index: 100;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  background: url("https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg")
+              no-repeat center / contain;
+  opacity: 0.85;
+  z-index: 90;
+  pointer-events: none;
 }
 
-#fake-controls span {
-  font-size: 90px;
-  color: #fff;
-}
-
-/* ===== WATERMARK (2 SAJA) ===== */
+/* ================= WATERMARK (2) ================= */
 .watermark {
   position: absolute;
   font-size: 24px;
   font-weight: bold;
   color: rgba(255,255,255,0.18);
-  pointer-events: none;
   white-space: nowrap;
+  pointer-events: none;
   z-index: 60;
-  animation: slide 28s linear infinite;
+  animation: wmMove 28s linear infinite;
 }
 
-.wm-1 { top: 15%; left: -40%; }
-.wm-2 { bottom: 20%; right: -40%; animation-direction: reverse; }
+.wm1 { top: 18%; left: -40%; }
+.wm2 { bottom: 22%; right: -40%; animation-direction: reverse; }
 
-@keyframes slide {
+@keyframes wmMove {
   from { transform: translateX(0); }
   to   { transform: translateX(180%); }
+}
+
+/* ================= FAKE PLAY ================= */
+#fake-play {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+}
+
+#fake-play span {
+  font-size: 90px;
+  color: #fff;
 }
 </style>
 </head>
@@ -100,21 +123,25 @@ iframe {
 <div id="player-wrapper">
 
   <!-- WATERMARK -->
-  <div class="watermark wm-1">ReplayShow-JKT48</div>
-  <div class="watermark wm-2">ReplayShow-JKT48</div>
+  <div class="watermark wm1">ReplayShow-JKT48</div>
+  <div class="watermark wm2">ReplayShow-JKT48</div>
 
-  <!-- MASK BRANDING YOUTUBE -->
-  <div class="yt-mask mask-top-right"></div>
-  <div class="yt-mask mask-bottom-left"></div>
+  <!-- MASK BRANDING -->
+  <div class="mask-top-left"></div>
+  <div class="mask-top-right"></div>
+  <div class="mask-bottom-left"></div>
+
+  <!-- LOGO SAJA -->
+  <div class="yt-logo-only"></div>
 
   <!-- FAKE PLAY -->
-  <div id="fake-controls">
+  <div id="fake-play">
     <span>▶</span>
   </div>
 
-  <!-- YOUTUBE PLAYER -->
+  <!-- YOUTUBE -->
   <iframe id="ytplayer"
-    src="https://www.youtube-nocookie.com/embed/VIDEO_ID_GANTI?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1&rel=0"
+    src="https://www.youtube-nocookie.com/embed/VIDEO_ID_GANTI?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1"
     allow="autoplay; encrypted-media"
     allowfullscreen>
   </iframe>
@@ -122,25 +149,37 @@ iframe {
 </div>
 
 <script>
-/* ===== FAKE PLAY ===== */
-const overlay = document.getElementById('fake-controls');
-const iframe  = document.getElementById('ytplayer');
+/* ================= PLAY ================= */
+const fake = document.getElementById('fake-play');
+const yt   = document.getElementById('ytplayer');
 
-overlay.onclick = () => {
-  overlay.style.display = 'none';
-  iframe.style.pointerEvents = 'auto';
-  iframe.src = iframe.src.replace('mute=1','mute=0');
+fake.onclick = () => {
+  fake.style.display = 'none';
+  yt.style.pointerEvents = 'auto';
+  yt.src = yt.src.replace('mute=1','mute=0');
 };
 
-/* ===== ANTI USER AWAM ===== */
+/* ================= HARDCORE LOCK ================= */
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+
 document.addEventListener('keydown', e => {
   if (
     e.key === 'F12' ||
-    (e.ctrlKey && ['c','u','s','x','a'].includes(e.key.toLowerCase()))
-  ) e.preventDefault();
+    e.key === 'PrintScreen' ||
+    (e.ctrlKey && ['u','c','s','x','a','p'].includes(e.key.toLowerCase())) ||
+    (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))
+  ) {
+    e.preventDefault();
+    return false;
+  }
 });
+
+/* BLOCK LONG PRESS MOBILE */
+document.addEventListener('touchstart', e => {
+  if (e.touches.length > 1) e.preventDefault();
+},{ passive:false });
 </script>
 
 </body>
